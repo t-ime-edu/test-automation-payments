@@ -80,7 +80,7 @@ export class FlowManager {
       await this._step4_SelectClassAndPayment();
 
       // Step 5: Paymint 결제 처리
-      // await this._step5_ProcessPayment();
+      await this._step5_ProcessPayment();
 
       this.result.success = true;
       this.logger.info('✓ Full flow completed successfully');
