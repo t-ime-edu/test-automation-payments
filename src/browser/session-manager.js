@@ -113,7 +113,7 @@ export class BrowserSessionManager {
     if (this.contextCreating.has(browserId)) {
       this.logger.debug(`Shared context for ${browserId} already creating, waiting...`);
       const context = await this.contextCreating.get(browserId);
-      this.logger.debug(`Shared context for ${browserId} ready after waiting`);
+      this.logger.debug(`Shared context for ${browserId} ready (reused)`);
       return context;
     }
 
@@ -130,7 +130,7 @@ export class BrowserSessionManager {
     }).then(context => {
       this.sharedContexts.set(browserId, context);
       this.contextCreating.delete(browserId);
-      this.logger.info(`Shared context created for ${browserId}`);
+      this.logger.info(`✓ Shared context created for ${browserId} (1 context for all tabs)`);
       return context;
     }).catch(error => {
       this.contextCreating.delete(browserId);
@@ -148,10 +148,11 @@ export class BrowserSessionManager {
   async createSession(sessionId, browserId = null) {
     // browserId가 지정되지 않았으면 자동 할당
     if (!browserId) {
-      const browserIndex = Math.floor(this.sessionCounter / this.tabsPerBrowser);
+      // sessionId에서 숫자 추출 (test-1 -> 1)
+      const sessionNum = parseInt(sessionId.match(/\d+/)?.[0] || '0');
+      const browserIndex = Math.floor((sessionNum - 1) / this.tabsPerBrowser);
       browserId = `browser-${browserIndex}`;
-      this.sessionCounter++;
-      this.logger.debug(`Auto-assigning session ${sessionId} to ${browserId} (counter: ${this.sessionCounter})`);
+      this.logger.debug(`Auto-assigning session ${sessionId} (num: ${sessionNum}) to ${browserId}`);
     }
 
     const browser = await this.startBrowser(browserId);

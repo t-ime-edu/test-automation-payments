@@ -83,27 +83,20 @@ Web GUI를 사용하면 브라우저에서 다음을 할 수 있습니다:
 
 ### 3. 결과 확인
 
-#### 📄 한글 보고서 확인 (권장)
+#### 📄 테스트 결과 확인
 
-```bash
-# 가장 최근 테스트의 한글 보고서 확인
-./view-korean-report.sh
-```
+**테스트 결과 파일:**
+- **통계 데이터**: `./reports/monitoring/[날짜]/[테스트명]/stats.json`
+- **상세 로그**: `./reports/monitoring/[날짜]/[테스트명]/test.log`
+- **스크린샷**: `./screenshots/` 폴더에 저장
+- **Trace 파일**: `./test-results/[날짜]/` 폴더에 저장
 
-**한글 보고서에 포함된 내용:**
+**보고서 내용:**
 - ✅ 전체 성공/실패 현황 및 성공률
 - 📊 단계별/에러 유형별 실패 분석
 - ⏱️ 처리 시간 통계 (평균/최소/최대)
 - 🚨 주요 실패 사례 상세 내역
 - 💡 시스템 성능 평가 및 권장사항
-
-#### 기타 결과 파일
-
-- **한글 보고서**: `./reports/monitoring/[날짜]/[테스트명]/테스트보고서.md`
-- **통계 데이터**: `./reports/monitoring/[날짜]/[테스트명]/stats.json`
-- **상세 로그**: `./reports/monitoring/[날짜]/[테스트명]/test.log`
-- **스크린샷**: `./screenshots/` 폴더에 저장
-- **Trace 파일**: `./test-results/[날짜]/` 폴더에 저장
 
 ## 성능 지표
 
@@ -180,6 +173,10 @@ WAIT_TIMEOUT=30000
 
 # 헤드리스 모드
 HEADLESS=true
+
+# 에러 스크린샷 활성화 (기본값: true)
+# 개발/디버깅: true, 대량 테스트: false (성능 최적화)
+ENABLE_SCREENSHOTS=true
 
 # 로그 레벨 (debug, info, warn, error)
 LOG_LEVEL=info

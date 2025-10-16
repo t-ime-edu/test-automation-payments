@@ -160,13 +160,7 @@ export class WaitingPage extends BasePage {
     this.logger.info(`Queue position: ${waitingInfo.waitingCount} users ahead`);
     this.logger.info(`Estimated wait time: ${waitingInfo.estimatedTime}s`);
 
-    // 대기 페이지 스크린샷 캡처
-    try {
-      const screenshotPath = await this.takeScreenshot('waiting-page');
-      this.logger.info(`Waiting page screenshot saved: ${screenshotPath}`);
-    } catch (error) {
-      this.logger.warn('Failed to capture waiting page screenshot:', error);
-    }
+    // 스크린샷 제거 (성능 향상)
 
     // 대기 완료까지 대기
     const startTime = Date.now();

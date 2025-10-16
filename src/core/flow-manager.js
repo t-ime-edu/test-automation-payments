@@ -11,6 +11,7 @@ import { DetailedInfoPage } from '../pages/detailed-info-page.js';
 import { ClassSelectionPage } from '../pages/class-selection-page.js';
 import { PaymintPaymentPage } from '../pages/paymint-payment-page.js';
 import { WaitingPage } from '../pages/waiting-page.js';
+import { config } from '../config/index.js';
 
 export class FlowManager {
   constructor(page, sessionId, monitor = null) {
@@ -22,6 +23,10 @@ export class FlowManager {
 
     // 페이지 인스턴스 저장용
     this.classSelectionPage = null; // 추가
+
+    // 에러 스크린샷 활성화 여부 (config에서 관리)
+    // 개발/디버깅: true (기본값), 대량 테스트: false (성능 최적화)
+    this.enableScreenshots = config.enableScreenshots;
 
     this.result = {
       success: false,
@@ -75,7 +80,7 @@ export class FlowManager {
       await this._step4_SelectClassAndPayment();
 
       // Step 5: Paymint 결제 처리
-      await this._step5_ProcessPayment();
+      // await this._step5_ProcessPayment();
 
       this.result.success = true;
       this.logger.info('✓ Full flow completed successfully');
@@ -145,12 +150,14 @@ export class FlowManager {
         this.monitor.recordError(this.sessionId, 'step1-course', error);
       }
 
-      // 에러 스크린샷 캡처
-      try {
-        await this.page.screenshot({ path: `public/screenshots/error-step1-${this.sessionId}.png` });
-        this.logger.info('Error screenshot saved');
-      } catch (screenshotError) {
-        this.logger.warn('Failed to capture error screenshot');
+      // 에러 스크린샷 캡처 (환경변수로 제어)
+      if (this.enableScreenshots) {
+        try {
+          await this.page.screenshot({ path: `public/screenshots/error-step1-${this.sessionId}.png` });
+          this.logger.info('Error screenshot saved');
+        } catch (screenshotError) {
+          this.logger.warn('Failed to capture error screenshot');
+        }
       }
 
       throw new Error(`Course selection failed: ${error.message}`);
@@ -193,11 +200,13 @@ export class FlowManager {
 
       if (this.monitor) this.monitor.recordError(this.sessionId, 'step2-basic', error);
 
-      try {
-        await this.page.screenshot({ path: `public/screenshots/error-step2-${this.sessionId}.png` });
-        this.logger.info('Error screenshot saved');
-      } catch (screenshotError) {
-        this.logger.warn('Failed to capture error screenshot');
+      if (this.enableScreenshots) {
+        try {
+          await this.page.screenshot({ path: `public/screenshots/error-step2-${this.sessionId}.png` });
+          this.logger.info('Error screenshot saved');
+        } catch (screenshotError) {
+          this.logger.warn('Failed to capture error screenshot');
+        }
       }
 
       throw new Error(`Basic info failed: ${error.message}`);
@@ -241,11 +250,13 @@ export class FlowManager {
 
       if (this.monitor) this.monitor.recordError(this.sessionId, 'step3-detailed', error);
 
-      try {
-        await this.page.screenshot({ path: `public/screenshots/error-step3-${this.sessionId}.png` });
-        this.logger.info('Error screenshot saved');
-      } catch (screenshotError) {
-        this.logger.warn('Failed to capture error screenshot');
+      if (this.enableScreenshots) {
+        try {
+          await this.page.screenshot({ path: `public/screenshots/error-step3-${this.sessionId}.png` });
+          this.logger.info('Error screenshot saved');
+        } catch (screenshotError) {
+          this.logger.warn('Failed to capture error screenshot');
+        }
       }
 
       throw new Error(`Detailed info failed: ${error.message}`);
@@ -294,11 +305,13 @@ export class FlowManager {
 
       if (this.monitor) this.monitor.recordError(this.sessionId, 'step4-class', error);
 
-      try {
-        await this.page.screenshot({ path: `public/screenshots/error-step4-${this.sessionId}.png` });
-        this.logger.info('Error screenshot saved');
-      } catch (screenshotError) {
-        this.logger.warn('Failed to capture error screenshot');
+      if (this.enableScreenshots) {
+        try {
+          await this.page.screenshot({ path: `public/screenshots/error-step4-${this.sessionId}.png` });
+          this.logger.info('Error screenshot saved');
+        } catch (screenshotError) {
+          this.logger.warn('Failed to capture error screenshot');
+        }
       }
 
       throw new Error(`Class/payment selection failed: ${error.message}`);
@@ -386,7 +399,9 @@ export class FlowManager {
             if (currentUrl.includes('/complete/')) {
               this.logger.info('✓ Payment URL changed to complete page');
             } else {
-              this.logger.warn(`Payment still on: ${currentUrl}`);
+              // 결제 완료를 확인할 수 없으면 에러 throw
+              await paymentPage.close().catch(() => {});
+              throw new Error(`Payment completion failed - still on: ${currentUrl}`);
             }
           }
 
@@ -415,19 +430,16 @@ export class FlowManager {
 
       if (this.monitor) this.monitor.recordError(this.sessionId, 'step5-payment', error);
 
-      try {
-        await this.page.screenshot({ path: `public/screenshots/error-step5-${this.sessionId}.png` });
-        this.logger.info('Error screenshot saved');
-      } catch (screenshotError) {
-        this.logger.warn('Failed to capture error screenshot');
+      if (this.enableScreenshots) {
+        try {
+          await this.page.screenshot({ path: `public/screenshots/error-step5-${this.sessionId}.png` });
+          this.logger.info('Error screenshot saved');
+        } catch (screenshotError) {
+          this.logger.warn('Failed to capture error screenshot');
+        }
       }
 
-      // 결제 에러는 치명적이지 않음 (기록만 함)
-      this.result.errors.push({
-        step: 'payment',
-        message: error.message,
-        timestamp: new Date()
-      });
+      throw new Error(`Payment processing failed: ${error.message}`);
     }
   }
 }

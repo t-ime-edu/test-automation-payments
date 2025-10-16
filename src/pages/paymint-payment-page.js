@@ -662,21 +662,7 @@ export class PaymintPaymentPage extends BasePage {
   async capturePaymentScreenshots() {
     const screenshots = [];
 
-    try {
-      // 초기 페이지
-      const initialScreenshot = await this.takeScreenshot('paymint-initial');
-      screenshots.push(initialScreenshot);
-
-      // 카드 입력 폼 (있다면)
-      if (await this.page.isVisible('text=카드를 선택해 주세요')) {
-        const formScreenshot = await this.takeScreenshot('paymint-card-form');
-        screenshots.push(formScreenshot);
-      }
-
-      return screenshots;
-    } catch (error) {
-      this.logger.error('Failed to capture screenshots:', error);
-      return screenshots;
-    }
+    // 스크린샷 제거 (성능 향상)
+    return screenshots;
   }
 }

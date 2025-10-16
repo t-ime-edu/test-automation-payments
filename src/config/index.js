@@ -40,6 +40,10 @@ export class TestConfig {
     this.screenshotOnFailure = process.env.SCREENSHOT_ON_FAILURE === 'true';
     this.videoOnFailure = process.env.VIDEO_ON_FAILURE === 'true';
     this.logLevel = process.env.LOG_LEVEL || 'info';
+    
+    // 에러 스크린샷 활성화 여부 (기본값: true)
+    // 개발/디버깅: true, 대량 테스트: false (성능 최적화)
+    this.enableScreenshots = process.env.ENABLE_SCREENSHOTS !== 'false';
 
     // 환경 설정
     this.environment = process.env.ENVIRONMENT || 'dev';

@@ -33,16 +33,15 @@ function printUsage() {
   -c, --count <개수>       테스트 개수 (multi 모드, 기본값: 3)
   -p, --parallel <개수>    동시 실행 개수 (기본값: 2)
   -d, --duration <분>      실행 시간(분) - 부하테스트용 (기본값: 5)
-  -t, --tabs <개수>        브라우저당 탭 수 (기본값: 10)
   --no-tab-mode           탭 모드 비활성화 (각 세션마다 독립 Context)
   -h, --help              도움말 출력
 
 📝 실행 예시:
   node cli.js                         # 단일 테스트
   node cli.js single                  # 단일 테스트
-  node cli.js multi -c 5 -p 3        # 5개 테스트를 3개씩 동시 실행 (탭 모드)
-  node cli.js multi -c 20 -p 20 -t 10  # 20개 테스트 (2 브라우저 × 10 탭)
-  node cli.js multi -c 400 -p 50     # 400명 동접 테스트 (메모리 최적화)
+  node cli.js multi -c 40 -p 20      # 40개 테스트를 20개씩 동시 실행 (자동: 2 브라우저 × 20 탭)
+  node cli.js multi -c 38 -p 20      # 38개 테스트 (자동: 1 브라우저 × 20탭 + 1 브라우저 × 18탭)
+  node cli.js multi -c 400 -p 50     # 400명 동접 테스트 (자동: 8 브라우저 × 50 탭)
   node cli.js multi -c 5 --no-tab-mode  # 탭 모드 비활성화
   node cli.js load -d 10 -p 2        # 10분 동안 2개씩 부하 테스트
 
@@ -70,7 +69,6 @@ function parseArgs() {
     count: 3,
     concurrency: 2,
     duration: 5,
-    tabsPerBrowser: 10,
     useTabMode: true  // 기본값: 탭 모드 활성화
   };
 
@@ -100,14 +98,17 @@ function parseArgs() {
       case '--duration':
         options.duration = parseInt(args[++i]) || 5;
         break;
-      case '-t':
-      case '--tabs':
-        options.tabsPerBrowser = parseInt(args[++i]) || 10;
-        break;
       case '--no-tab-mode':
         options.useTabMode = false;
         break;
     }
+  }
+
+  // 탭 모드일 경우 동시성(concurrency)만큼 탭 생성
+  if (options.useTabMode) {
+    options.tabsPerBrowser = Math.max(1, options.concurrency);
+  } else {
+    options.tabsPerBrowser = 1;
   }
 
   return options;

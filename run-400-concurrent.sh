@@ -10,6 +10,9 @@ BATCH=50
 BATCHES=$((TOTAL / BATCH))
 WAIT_TIME=10  # 배치 간 대기 시간 (초)
 
+# 성능 최적화: 스크린샷 비활성화 (대량 테스트 시 권장)
+export ENABLE_SCREENSHOTS=false
+
 # 색상 코드
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
@@ -28,6 +31,7 @@ echo "   • 총 테스트: ${TOTAL}명"
 echo "   • 배치 크기: ${BATCH}명"
 echo "   • 배치 수: ${BATCHES}개"
 echo "   • 배치 간 대기: ${WAIT_TIME}초"
+echo "   • 스크린샷: 비활성화 (성능 최적화)"
 echo ""
 
 # 메모리 체크
