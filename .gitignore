@@ -1,0 +1,13 @@
+node_modules/
+.env
+test-results/
+playwright-report/
+screenshots/
+videos/
+*.log
+.DS_Store
+.aider*
+.kiro
+.vscode
+.claude
+reports/

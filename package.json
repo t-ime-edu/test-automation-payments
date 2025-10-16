@@ -1,0 +1,34 @@
+{
+  "name": "online-course-load-test",
+  "version": "1.0.0",
+  "description": "Playwright-based load testing tool for online course registration system",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "node cli.js",
+    "test:single": "node cli.js single",
+    "test:multi": "node cli.js multi",
+    "test:load": "node cli.js load",
+    "test:debug": "PWDEBUG=1 node cli.js single",
+    "gui": "node web-gui.js",
+    "start": "node web-gui.js",
+    "view-report": "node view-report.js",
+    "install-browsers": "playwright install"
+  },
+  "keywords": [
+    "playwright",
+    "load-testing",
+    "automation",
+    "course-registration"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@playwright/test": "^1.40.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "playwright": "^1.40.0"
+  }
+}

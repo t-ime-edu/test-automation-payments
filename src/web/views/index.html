@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎓 온라인 수강신청 자동화 테스트</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>온라인 수강신청 자동화 테스트</h1>
+        </div>
+
+        <div class="main-content">
+            <!-- 현재 설정 표시 -->
+            <div class="card">
+                <h2>📋 현재 설정</h2>
+                <div class="current-config" id="current-config">
+                    <div class="config-item">
+                        <span class="config-label">환경:</span>
+                        <span class="config-value" id="config-environment">로딩중...</span>
+                    </div>
+                    <div class="config-item">
+                        <span class="config-label">테스트 URL:</span>
+                        <span class="config-value" id="config-url">로딩중...</span>
+                    </div>
+                    <div class="config-item">
+                        <span class="config-label">코드:</span>
+                        <span class="config-value" id="config-acadcd">로딩중...</span>
+                    </div>
+                    <div class="config-item">
+                        <span class="config-label">최대 동시 실행:</span>
+                        <span class="config-value" id="config-concurrent">로딩중...</span>
+                    </div>
+                    <div class="config-item">
+                        <span class="config-label">헤드리스 모드:</span>
+                        <span class="config-value" id="config-headless">로딩중...</span>
+                    </div>
+                    <div class="config-item">
+                        <span class="config-label">로그 레벨:</span>
+                        <span class="config-value" id="config-loglevel">로딩중...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 환경설정 -->
+            <div class="card">
+                <h2>⚙️ 환경 설정</h2>
+                <form id="env-config-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="environment">🌍 환경</label>
+                            <select class="form-control" id="environment" name="environment">
+                                <option value="dev">개발 (dev)</option>
+                                <option value="prod">운영 (prod)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="headless">헤드리스 모드</label>
+                            <select class="form-control" id="headless" name="headless">
+                                <option value="true">예 (백그라운드 실행)</option>
+                                <option value="false">아니오 (브라우저 표시)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">💾 설정 저장</button>
+                </form>
+            </div>
+
+            <!-- 테스트 모드 선택 -->
+            <div class="card">
+                <h2>🎯 테스트 모드 선택</h2>
+                <div class="test-mode-grid">
+                    <div class="test-mode-card" data-mode="single">
+                        <div class="test-mode-icon">🎯</div>
+                        <h3>단일 테스트</h3>
+                        <p>한 번의 테스트를 실행합니다</p>
+                    </div>
+                    <div class="test-mode-card" data-mode="multi">
+                        <div class="test-mode-icon">🔄</div>
+                        <h3>멀티 테스트</h3>
+                        <p>여러 개의 테스트를 동시 실행합니다</p>
+                    </div>
+                    <div class="test-mode-card" data-mode="load">
+                        <div class="test-mode-icon">⚡</div>
+                        <h3>부하 테스트</h3>
+                        <p>지정된 시간 동안 부하 테스트를 실행합니다</p>
+                    </div>
+                    <div class="test-mode-card" data-mode="debug">
+                        <div class="test-mode-icon">🔍</div>
+                        <h3>디버그 모드</h3>
+                        <p>브라우저를 표시하며 디버깅합니다</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 테스트 옵션 -->
+            <div class="card" id="test-options" style="display: none;">
+                <h2>📝 테스트 옵션</h2>
+                <form id="test-options-form">
+                    <div class="form-row">
+                        <div class="form-group" id="count-group">
+                            <label for="test_count">테스트 개수</label>
+                            <input type="number" class="form-control" id="test_count" name="test_count" value="4" min="1" max="1000">
+                        </div>
+                        <div class="form-group" id="parallel-group">
+                            <label for="parallel_count">동시 실행 개수</label>
+                            <input type="number" class="form-control" id="parallel_count" name="parallel_count" value="2" min="1" max="50">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" id="duration-group" style="display: none;">
+                            <label for="test_duration">실행 시간 (분)</label>
+                            <input type="number" class="form-control" id="test_duration" name="test_duration" value="5" min="1" max="60">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 실행 버튼 -->
+            <div class="card">
+                <h2>🚀 테스트 실행</h2>
+                <button id="run-test-btn" class="btn btn-success" style="width: 100%; font-size: 18px; padding: 20px;">
+                    ▶️ 테스트 시작
+                </button>
+                <button id="stop-test-btn" class="btn btn-danger" style="width: 100%; font-size: 18px; padding: 20px; display: none;">
+                    ⏹️ 테스트 중지
+                </button>
+            </div>
+
+            <!-- 실시간 상태 -->
+            <div class="status-panel" id="status-panel" style="display: none;">
+                <h3>📊 실시간 상태</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                </div>
+                <div id="status-logs"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="/app.js"></script>
+</body>
+</html>
