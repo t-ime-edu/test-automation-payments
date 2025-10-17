@@ -30,9 +30,6 @@ export class TestExecutor {
       const result = await session.run();
       this.results.push(result);
 
-      // 보고서 생성
-      await this._generateReport('single', [result]);
-
       return result;
     } finally {
       this.sessions.delete(session.id);
@@ -117,9 +114,6 @@ export class TestExecutor {
       const totalTime = performanceMonitor.endTimer('total');
       this.logger.info(`Multi test completed in ${totalTime}ms`);
 
-      // 보고서 생성
-      await this._generateReport('multi', this.results, { count, concurrency });
-
       return {
         success: this.results.every(r => r.success),
         results: this.results,
@@ -165,9 +159,6 @@ export class TestExecutor {
 
       const totalTime = performanceMonitor.endTimer('total');
       this.logger.info(`Load test completed in ${totalTime}ms`);
-
-      // 보고서 생성
-      await this._generateReport('load', this.results, { duration, concurrency });
 
       return {
         success: this.results.filter(r => r.success).length > 0,
