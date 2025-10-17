@@ -6,7 +6,6 @@
 import { Logger } from '../utils/logger.js';
 import { PerformanceMonitor } from '../utils/performance.js';
 import { TestSession } from './test-session.js';
-import { ReportGenerator } from '../reports/report-generator.js';
 import { ConcurrentMonitor } from '../utils/concurrent-monitor.js';
 
 export class TestExecutor {
@@ -291,25 +290,6 @@ export class TestExecutor {
       minTime: times.length > 0 ? Math.min(...times) : 0,
       maxTime: times.length > 0 ? Math.max(...times) : 0
     };
-  }
-
-  /**
-   * 보고서 생성
-   */
-  async _generateReport(mode, results, config = {}) {
-    try {
-      const reportGenerator = new ReportGenerator();
-      const report = reportGenerator.generateComprehensiveReport(results, {
-        mode,
-        ...config,
-        count: results.length
-      });
-
-      this.logger.info(`Report generated: ${report.htmlPath}`);
-      return report;
-    } catch (error) {
-      this.logger.error('Failed to generate report:', error);
-    }
   }
 
   /**
